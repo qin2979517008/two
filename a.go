@@ -5,39 +5,38 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 )
+
 type Student struct {
 	Xh string `json:"xh"`
-	Xm string   `json:"xm"`
-	XmEn string  `json:"xmEn"`
-	Xb string  `json:"xb"`
-	Bj string  `json:"bj"`
-	Zyh string   `json:"zyh"`
-	Zym string  `json:"zym"`
-	Yxh string   `json:"yxh"`
-	Yxm string	`json:"yxm"`
-	Nj string	`json:"nj"`
-	Csrq string	`json:"csrq"`
-	Xjzt string	`json:"xjzt"`
-	Rxrq string	`json:"rxrq"`
-	Yxmen string	`json:"yxmen"`
-	ZymEn string	`json:"zymEn"`
-	Xz int	`json:"xz"`
-	Mz string	`json:"mz"`
+	Xm string `json:"xm"`
 }
+
 func main() {
 	var name Student
-	 file, err := os.OpenFile("Students.txt", os.O_RDONLY, 0644)
-	 if err != nil {
- 	fmt.Println("Open file error!")
-	 }
-	 str,err:= ioutil.ReadAll(file)
-	 if err !=nil{
- 	fmt.Println(err)
-	 }
-	err =json.Unmarshal([]byte(str), &name)
-	if err!=nil{
+	file, err := os.OpenFile("Students.txt", os.O_RDONLY, 0644)
+	if err != nil {
+		fmt.Println("Open file error!")
+	}
+	str, err := ioutil.ReadAll(file)
+	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(name.Xm)
+
+	regall := `{"xh":"\d{7}573[\s\S]{21}`
+	rega := regexp.MustCompile(regall)
+	a := rega.FindAllStringSubmatch(string(str), 1)
+	js := append(a[0], "}")
+	justString := strings.Join(js, " ")
+
+	 
+	err = json.Unmarshal([]byte(justString), &name)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println("需要找的人姓名为", name.Xm)
+
 }
